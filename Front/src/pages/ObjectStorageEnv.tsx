@@ -261,14 +261,7 @@ EOF`;
     return (
         <Container>
             <Title>Object Storage env.sh 생성</Title>
-            <Subtitle>kakaocloud 교육용 · Essential Basic Course Lab11-2-2</Subtitle>
-
-            <Description>
-                kakaocloud IAM과 상호작용하여 AWS S3 호환 API용 자격 증명(AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY)을
-                자동 발급하는 <b>env.sh</b> 생성 스크립트를 만듭니다. 생성된 스크립트를 VM 터미널에 붙여넣은 뒤
-                <code> . env.sh</code> 로 실행하세요.
-            </Description>
-
+            <Subtitle>kakaocloud 교육용</Subtitle>
             <GroupContainer>
                 <InputBox
                     label="1. 사용자 액세스 키"
