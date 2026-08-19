@@ -1,6 +1,6 @@
 # Script Generator
 
-kakaocloud 교육 실습용 스크립트 생성 사이트 (http://210.109.54.80/)
+kakaocloud 교육 실습용 스크립트 생성 사이트 (http://210.109.83.141/)
 
 ## 구조
 
