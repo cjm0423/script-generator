@@ -46,18 +46,38 @@ ScriptGenerator/
 | `POST /get-instance-groups`, `/get-instance-endpoints` | MySQL 인스턴스 그룹 / Primary·Standby 엔드포인트 |
 | `POST /get-kafka-clusters`, `/get-kafka-bootstrap-servers(-by-id)` | Kafka 클러스터 / bootstrap servers |
 
-## 실행
+## 배포 (VM 1대에 프론트 + 백엔드 함께)
+
+사전 준비: Ubuntu 22.04, 보안 그룹 인바운드 22/80/8000, 공인 IP 할당
 
 ```bash
-# 백엔드
-cd Back
-docker build -t script-generator-back .
-docker run -d -p 8000:8000 script-generator-back
+# 1. Docker, git 설치 (최초 1회)
+sudo apt-get update && sudo apt-get install -y git docker.io
+sudo usermod -aG docker ubuntu && newgrp docker
 
-# 프론트 (.env 의 REACT_APP_API_BASE_URL 을 백엔드 주소로 맞춘 뒤)
-cd Front
-docker build -t script-generator-front .
-docker run -d -p 80:80 script-generator-front
+# 2. 클론 및 백엔드 주소 설정 (VM 공인 IP로)
+git clone https://github.com/<아이디>/script-generator.git
+cd script-generator
+echo "REACT_APP_API_BASE_URL=http://<VM공인IP>:8000" > Front/.env
+
+# 3. 백엔드
+docker build -t sg-back ./Back
+docker run -d --name sg-back --restart unless-stopped -p 8000:8000 sg-back
+
+# 4. 프론트
+docker build -t sg-front ./Front
+docker run -d --name sg-front --restart unless-stopped -p 80:80 sg-front
 ```
+
+## 코드 수정 후 재배포
+
+```bash
+cd ~/script-generator && git pull
+docker build -t sg-front ./Front && docker rm -f sg-front && docker run -d --name sg-front --restart unless-stopped -p 80:80 sg-front
+# 백엔드 변경 시
+docker build -t sg-back ./Back && docker rm -f sg-back && docker run -d --name sg-back --restart unless-stopped -p 8000:8000 sg-back
+```
+
+> `.env`는 빌드 시점에 번들에 포함되므로, 주소를 바꾸면 반드시 프론트를 다시 빌드해야 함.
 
 로컬 개발: `cd Back && uvicorn main:app --reload` / `cd Front && npm install && npm start`
